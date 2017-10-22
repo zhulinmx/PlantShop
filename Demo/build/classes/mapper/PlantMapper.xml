@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mapper.plant.PlantMapper" >
+  <resultMap id="BaseResultMap" type="com.mapper.plant.persistent.Plant" >
+    <id column="PLANTID" property="plantid" jdbcType="INTEGER" />
+    <result column="CATEGORYID" property="categoryid" jdbcType="INTEGER" />
+    <result column="PLANTNAME" property="plantname" jdbcType="VARCHAR" />
+    <result column="CERATETIME" property="ceratetime" jdbcType="TIMESTAMP" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    <result column="DESCRIPT" property="descript" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    PLANTID, CATEGORYID, PLANTNAME, CERATETIME, STATUS, DESCRIPT
+  </sql>
+  
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.domain.PlantQueryCondition" >
+    select 
+    <include refid="Base_Column_List" />
+    from plant
+    where 1=1
+    	<if test="plantName != null">
+    		AND PLANTNAME LIKE CONCAT('%',#{plantName,jdbcType=INTEGER},'%')
+    	</if>
+    	<if test="status != null">
+    		AND STATUS = #{status,jdbcType=INTEGER}
+    	</if>
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from plant
+    where PLANTID = #{plantid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from plant
+    where PLANTID = #{plantid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.mapper.plant.persistent.Plant" >
+    insert into plant (PLANTID, CATEGORYID, PLANTNAME, 
+      CERATETIME, STATUS, DESCRIPT
+      )
+    values (#{plantid,jdbcType=INTEGER}, #{categoryid,jdbcType=INTEGER}, #{plantname,jdbcType=VARCHAR}, 
+      now(), #{status,jdbcType=INTEGER}, #{descript,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.mapper.plant.persistent.Plant" >
+    insert into plant
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="plantid != null" >
+        PLANTID,
+      </if>
+      <if test="categoryid != null" >
+        CATEGORYID,
+      </if>
+      <if test="plantname != null" >
+        PLANTNAME,
+      </if>
+      <if test="ceratetime != null" >
+        CERATETIME,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="descript != null" >
+        DESCRIPT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="plantid != null" >
+        #{plantid,jdbcType=INTEGER},
+      </if>
+      <if test="categoryid != null" >
+        #{categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="plantname != null" >
+        #{plantname,jdbcType=VARCHAR},
+      </if>
+      <if test="ceratetime != null" >
+        #{ceratetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="descript != null" >
+        #{descript,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mapper.plant.persistent.Plant" >
+    update plant
+    <set >
+      <if test="categoryid != null" >
+        CATEGORYID = #{categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="plantname != null" >
+        PLANTNAME = #{plantname,jdbcType=VARCHAR},
+      </if>
+      <if test="ceratetime != null" >
+        CERATETIME = #{ceratetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="descript != null" >
+        DESCRIPT = #{descript,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where PLANTID = #{plantid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mapper.plant.persistent.Plant" >
+    update plant
+    set CATEGORYID = #{categoryid,jdbcType=INTEGER},
+      PLANTNAME = #{plantname,jdbcType=VARCHAR},
+      CERATETIME = #{ceratetime,jdbcType=TIMESTAMP},
+      STATUS = #{status,jdbcType=INTEGER},
+      DESCRIPT = #{descript,jdbcType=VARCHAR}
+    where PLANTID = #{plantid,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryPlanInfoByCondition" parameterType="com.domain.PlantInfoConditon" resultType="com.domain.PlantInfo">
+		SELECT
+			p.PLANTID plantid,
+			p.CATEGORYID categoryid,
+			p.PLANTNAME plantname,
+			p.CERATETIME ceratetime,
+			p.`STATUS` status,
+			p.DESCRIPT descript,
+			pic.id picId,
+			pic.PICTURE picture,
+			pc.CATEGORYNAME categoryName
+		FROM
+			plant AS p
+		INNER JOIN plantcategory AS pc ON p.CATEGORYID = pc.CATEGORYID
+		INNER JOIN plantpicture AS pic ON p.PLANTID = pic.PLANTID
+		WHERE
+			p.`STATUS` = 1
+			<if test="key != null and key != ''">
+				AND (
+					p.PLANTNAME LIKE CONCAT('%', #{key}, '%')
+					OR pc.CATEGORYNAME LIKE CONCAT('%', #{key}, '%')
+					OR p.DESCRIPT LIKE CONCAT('%', #{key}, '%')
+					)
+			</if>
+			<if test="categoryId != null and categoryId != ''">AND pc.CATEGORYID = #{categoryId}</if>
+			<if test="plantId != null and plantId != ''">AND p.PLANTID = #{plantId}</if>
+  </select>
+</mapper>

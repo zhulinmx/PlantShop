@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mapper.plant.PlantPictureMapper" >
+  <resultMap id="BaseResultMap" type="com.mapper.plant.persistent.PlantPicture" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="PLANTID" property="plantid" jdbcType="INTEGER" />
+    <result column="PICTURE" property="picture" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, PLANTID, PICTURE
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from plantpicture
+    where plantid = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from plantpicture
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.mapper.plant.persistent.PlantPicture" >
+    insert into plantpicture (id, PLANTID, PICTURE
+      )
+    values (#{id,jdbcType=INTEGER}, #{plantid,jdbcType=INTEGER}, #{picture,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.mapper.plant.persistent.PlantPicture" >
+    insert into plantpicture
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="plantid != null" >
+        PLANTID,
+      </if>
+      <if test="picture != null" >
+        PICTURE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="plantid != null" >
+        #{plantid,jdbcType=INTEGER},
+      </if>
+      <if test="picture != null" >
+        #{picture,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mapper.plant.persistent.PlantPicture" >
+    update plantpicture
+    <set >
+      <if test="plantid != null" >
+        PLANTID = #{plantid,jdbcType=INTEGER},
+      </if>
+      <if test="picture != null" >
+        PICTURE = #{picture,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mapper.plant.persistent.PlantPicture" >
+    update plantpicture
+    set PLANTID = #{plantid,jdbcType=INTEGER},
+      PICTURE = #{picture,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
